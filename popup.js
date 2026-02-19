@@ -14,6 +14,7 @@
 // DOM references
 // ---------------------------------------------------------------------------
 
+const stateSetup   = document.getElementById("state-setup");
 const stateIdle    = document.getElementById("state-idle");
 const stateLoading = document.getElementById("state-loading");
 const stateSuccess = document.getElementById("state-success");
@@ -23,6 +24,7 @@ const errorMessage = document.getElementById("error-message");
 const footer       = document.getElementById("footer");
 const btnCopy      = document.getElementById("btn-copy");
 const btnClear     = document.getElementById("btn-clear");
+const btnOpenOptions = document.getElementById("btn-open-options");
 const toast        = document.getElementById("toast");
 
 // ---------------------------------------------------------------------------
@@ -39,6 +41,7 @@ const toast        = document.getElementById("toast");
  */
 function renderState(status, data = {}) {
   // Hide every panel and the footer first.
+  stateSetup.style.display   = "none";
   stateIdle.style.display    = "none";
   stateLoading.style.display = "none";
   stateSuccess.style.display = "none";
@@ -46,6 +49,10 @@ function renderState(status, data = {}) {
   footer.style.display       = "none";
 
   switch (status) {
+    case "setup":
+      stateSetup.style.display = "flex";
+      break;
+
     case "loading":
       stateLoading.style.display = "flex";
       break;
@@ -76,15 +83,22 @@ function renderState(status, data = {}) {
 
 /**
  * Read the persisted summary state from storage and render the UI accordingly.
+ * If no API key has been configured, show the setup panel instead.
  */
 function loadAndRender() {
-  chrome.storage.local.get("summaryState", (result) => {
-    const state = result.summaryState;
-    if (!state) {
-      renderState("idle");
+  chrome.storage.sync.get("openaiApiKey", ({ openaiApiKey }) => {
+    if (!openaiApiKey) {
+      renderState("setup");
       return;
     }
-    renderState(state.status, { text: state.text, error: state.error });
+    chrome.storage.local.get("summaryState", (result) => {
+      const state = result.summaryState;
+      if (!state) {
+        renderState("idle");
+        return;
+      }
+      renderState(state.status, { text: state.text, error: state.error });
+    });
   });
 }
 
@@ -117,6 +131,11 @@ chrome.storage.onChanged.addListener((changes, area) => {
 // ---------------------------------------------------------------------------
 // Button handlers
 // ---------------------------------------------------------------------------
+
+/** Open the extension options page so the user can enter their API key. */
+btnOpenOptions.addEventListener("click", () => {
+  chrome.runtime.openOptionsPage();
+});
 
 /** Copy the summary text to the clipboard and show a brief toast. */
 btnCopy.addEventListener("click", async () => {

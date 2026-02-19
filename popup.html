@@ -167,6 +167,47 @@
       }
 
       /* -----------------------------------------------------------------------
+         State: setup required (no API key configured)
+      ----------------------------------------------------------------------- */
+      #state-setup {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        padding: 20px 0 8px;
+        color: #6b7280;
+        text-align: center;
+      }
+
+      #state-setup .setup-icon {
+        font-size: 30px;
+      }
+
+      #state-setup p {
+        font-size: 13px;
+        line-height: 1.5;
+        max-width: 270px;
+      }
+
+      #btn-open-options {
+        margin-top: 4px;
+        background: #4f46e5;
+        color: #ffffff;
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 500;
+        border: none;
+        border-radius: 6px;
+        padding: 7px 16px;
+        cursor: pointer;
+        transition: opacity 0.15s ease;
+      }
+
+      #btn-open-options:hover {
+        opacity: 0.85;
+      }
+
+      /* -----------------------------------------------------------------------
          State: error
       ----------------------------------------------------------------------- */
       #state-error {
@@ -260,6 +301,15 @@
 
     <!-- Main content: one of the four state panels is visible at a time -->
     <main>
+      <!-- Setup state: shown when no API key has been configured -->
+      <div id="state-setup">
+        <div class="setup-icon" aria-hidden="true">🔑</div>
+        <p>
+          Add your OpenAI API key in the extension options to get started.
+        </p>
+        <button id="btn-open-options">Open Options</button>
+      </div>
+
       <!-- Idle state: shown before any summarization has been triggered -->
       <div id="state-idle">
         <div class="idle-icon" aria-hidden="true">📋</div>
