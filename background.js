@@ -15,7 +15,7 @@ async function summarizeText(text) {
   const result = await chrome.storage.sync.get(['openaiApiKey']);
   const apiKey = result.openaiApiKey;
 
-  if (!apiKey || apiKey === 'YOUR_API_KEY') {
+  if (!apiKey) {
     throw new Error('Please set your OpenAI API key in the extension options.');
   }
 
